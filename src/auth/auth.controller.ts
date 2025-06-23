@@ -1,6 +1,6 @@
 import { JWTInterceptor, JWTRequest } from '@/global/jwt/jwt.interceptor';
 import { CustomApiResponse as CustomApiResponse } from '@/util/api.response';
-import { Body, Controller, Post, Req, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { MakeJwtToken } from './auth.util';
@@ -10,6 +10,9 @@ import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiResponse, ApiTa
 import { SignupResponse } from './dto/response/signup-response.dto';
 import { UserResponse } from './dto/response/user-response.dto';
 import { ApiDefaultResponses } from '../common/dto/api-response.dto';
+import { AuthGuard } from '@/global/guard/auth.guard';
+import { Request } from 'express';
+import { AdminGuard } from '@/global/guard/admin.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -54,7 +57,7 @@ export class AuthController {
   }
 
   @Post('/me')
-  @UseInterceptors(JWTInterceptor)
+  @UseGuards(AuthGuard)
   @ApiBearerAuth('accessToken')
   @ApiOkResponse({ type: UserResponse })
   @ApiDefaultResponses()
@@ -66,5 +69,11 @@ export class AuthController {
     }
 
     return CustomApiResponse.getInstance().ok('My Info.', { id: userId, name: findUser.name, email: findUser.email, role: findUser.role, status: findUser.status, createdAt: findUser.created_at });
+  }
+
+  @Get('guard')
+  @UseGuards(AuthGuard, AdminGuard)
+  async testGuardAdmin(@Req() req: Request) {
+    console.log(req.userId);
   }
 }

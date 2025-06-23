@@ -13,7 +13,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types", "./src/types"],
     "types": ["node"],
     "incremental": true,
     "skipLibCheck": true,
