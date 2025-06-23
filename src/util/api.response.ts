@@ -1,17 +1,17 @@
-import { ApiResponseOk, ApiResponseThrow } from '@/common/dto/api-response.dto';
+import { CustomApiResponseOk, CustomApiResponseThrow } from '@/common/dto/api-response.dto';
 import { HttpException } from '@nestjs/common';
 
-export class ApiResponse {
-  public static instance: ApiResponse;
+export class CustomApiResponse {
+  public static instance: CustomApiResponse;
 
-  public static getInstance(): ApiResponse {
+  public static getInstance(): CustomApiResponse {
     if (!this.instance) {
-      this.instance = new ApiResponse();
+      this.instance = new CustomApiResponse();
     }
     return this.instance;
   }
 
-  public ok(message: string, data: any): ApiResponseOk {
+  public ok(message: string, data: any): CustomApiResponseOk {
     return {
       success: true,
       message,
@@ -19,7 +19,7 @@ export class ApiResponse {
     };
   }
 
-  public throw(statusCode: number, message: string, error: any = null): ApiResponseThrow {
+  public throw(statusCode: number, message: string, error: any = null): CustomApiResponseThrow {
     throw new HttpException(
       {
         success: false,
