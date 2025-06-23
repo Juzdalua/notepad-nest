@@ -32,6 +32,7 @@ async function bootstrap() {
       .setDescription('The API description')
       .setVersion('1.0')
       .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'accessToken')
+      .addServer('http://localhost:8999')
       .build();
     const documentFactory = () => SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('/api-docs', app, documentFactory, {

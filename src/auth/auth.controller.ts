@@ -57,6 +57,7 @@ export class AuthController {
   @UseInterceptors(JWTInterceptor)
   @ApiBearerAuth('accessToken')
   @ApiOkResponse({ type: UserResponse })
+  @ApiDefaultResponses()
   async getMe(@Req() req: JWTRequest) {
     const { userId } = req;
     const findUser = await this.authService.findById(userId);
