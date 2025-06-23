@@ -1,0 +1,30 @@
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+
+export enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin'
+}
+
+@Entity({ name: 'user' })
+export class UserEntity {
+  @PrimaryGeneratedColumn({ type: 'int', unsigned: true })
+  id: number;
+
+  @Column({ type: 'varchar' })
+  email: string;
+
+  @Column({ type: 'varchar' })
+  name: string;
+
+  @Column({ type: 'varchar' })
+  password: string;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  role: UserRole;
+
+  @Column({ type: 'tinyint', default: 0 })
+  status: boolean;
+
+  @CreateDateColumn({ type: 'datetime' })
+  created_at: Date;
+}

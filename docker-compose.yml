@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  nest-app:
+    build: .
+    container_name: streaming-backend
+    volumes:
+      - .:/app
+      - /app/node_modules
+    working_dir: /app
+    command: npm run dev
+    ports:
+      - "4999:4999"
+    env_file:
+      - .env
+    environment:
+      - CHOKIDAR_USEPOLLING=true
