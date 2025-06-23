@@ -4,11 +4,11 @@ import { Body, Controller, Post, Req, UseInterceptors } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
 import { MakeJwtToken } from './auth.util';
-import { LoginDto } from './dto/login.dto';
-import { SignupDto } from './dto/signup.dto';
+import { LoginDto } from './dto/request/login.dto';
+import { SignupDto } from './dto/request/signup.dto';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { SignupResponse } from './dto/signup-response.dto';
-import { UserResponse } from './dto/user-response.dto';
+import { SignupResponse } from './dto/response/signup-response.dto';
+import { UserResponse } from './dto/response/user-response.dto';
 import { ApiDefaultResponses } from '../common/dto/api-response.dto';
 
 @ApiTags('Auth')

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { SignupDto } from './dto/signup.dto';
+import { SignupDto } from './dto/request/signup.dto';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity, UserRole } from './domain/user.domain';

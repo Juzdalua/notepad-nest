@@ -1,6 +1,6 @@
 import { CustomApiResponseBase } from '@/common/dto/api-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole } from '../domain/user.domain';
+import { UserRole } from '../../domain/user.domain';
 
 export class UserResponseData {
   @ApiProperty({ example: 1 })
