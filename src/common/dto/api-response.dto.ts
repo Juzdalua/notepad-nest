@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiInternalServerErrorResponse, ApiProperty } from '@nestjs/swagger';
 
-export class CustomApiResponseBase {
+export class CommonResponseBase {
   @ApiProperty({ example: true })
   success: boolean;
 
@@ -9,11 +9,11 @@ export class CustomApiResponseBase {
   message: string;
 }
 
-export class CustomApiResponseOk extends CustomApiResponseBase {
+export class CommonResponseOk extends CommonResponseBase {
   data: any;
 }
 
-export class CustomApiResponseThrow extends CustomApiResponseBase {
+export class CommonResponseThrow extends CommonResponseBase {
   error: any;
 }
 

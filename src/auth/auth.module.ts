@@ -4,9 +4,10 @@ import { AuthService } from './auth.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './domain/user.domain';
 import { RedisModule } from '@/global/redis/redis.module';
+import { CustomJwtModule } from '@/global/jwt/jwt.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity])],
+  imports: [TypeOrmModule.forFeature([UserEntity]), CustomJwtModule],
   controllers: [AuthController],
   providers: [AuthService],
   exports: [AuthService]

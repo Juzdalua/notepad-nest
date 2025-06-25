@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { CustomJwtService } from './jwt.service';
 
 @Module({
   imports: [
@@ -11,11 +12,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: configService.get<string>('JWT_ACCESS_EXPIRES_IN', '1h'),
-        },
-      }),
-    }),
+          expiresIn: configService.get<string>('JWT_ACCESS_EXPIRES_IN', '1h')
+        }
+      })
+    })
   ],
-  exports: [JwtModule], // 다른 모듈에서 사용할 수 있도록 export
+  providers: [CustomJwtService],
+  exports: [CustomJwtService]
 })
 export class CustomJwtModule {}

@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { Request } from 'express';
 import { UserRole } from '@/auth/domain/user.domain';
-import { CustomApiResponse } from '@/util/api.response';
+import { CommonResponse } from '@/util/api.response';
 
 @Injectable()
 export class AdminGuard implements CanActivate {

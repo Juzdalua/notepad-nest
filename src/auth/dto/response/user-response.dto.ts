@@ -1,4 +1,4 @@
-import { CustomApiResponseBase } from '@/common/dto/api-response.dto';
+import { CommonResponseBase } from '@/common/dto/api-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRole } from '../../domain/user.domain';
 
@@ -22,7 +22,7 @@ export class UserResponseData {
   createdAt: Date;
 }
 
-export class UserResponse extends CustomApiResponseBase {
+export class UserResponse extends CommonResponseBase {
   @ApiProperty({ type: UserResponseData })
   data: UserResponseData;
 }

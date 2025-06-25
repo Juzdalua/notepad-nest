@@ -1,24 +1,26 @@
-import { JWTInterceptor, JWTRequest } from '@/global/jwt/jwt.interceptor';
-import { CustomApiResponse as CustomApiResponse } from '@/util/api.response';
-import { Body, Controller, Get, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import { AdminGuard } from '@/global/guard/admin.guard';
+import { AuthGuard } from '@/global/guard/auth.guard';
+import { JWTRequest } from '@/global/jwt/jwt.interceptor';
+import { CommonResponse } from '@/util/api.response';
+import { BadRequestException, Body, Controller, Get, InternalServerErrorException, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
+import { Request } from 'express';
+import { ApiDefaultResponses } from '../common/dto/api-response.dto';
 import { AuthService } from './auth.service';
-import { MakeJwtToken } from './auth.util';
 import { LoginDto } from './dto/request/login.dto';
 import { SignupDto } from './dto/request/signup.dto';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SignupResponse } from './dto/response/signup-response.dto';
 import { UserResponse } from './dto/response/user-response.dto';
-import { ApiDefaultResponses } from '../common/dto/api-response.dto';
-import { AuthGuard } from '@/global/guard/auth.guard';
-import { Request } from 'express';
-import { AdminGuard } from '@/global/guard/admin.guard';
+import { CustomJwtService } from '@/global/jwt/jwt.service';
+import { UserRole } from './domain/user.domain';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly customJwtService: CustomJwtService
     // private readonly redisService: RedisService
   ) {}
 
@@ -30,15 +32,17 @@ export class AuthController {
   async signup(@Body() signupDto: SignupDto) {
     const findUser = await this.authService.findByEmail(signupDto.email);
     if (findUser) {
-      return CustomApiResponse.getInstance().throw(400, 'Email already exist.');
+      throw new BadRequestException('Email already exist.');
     } else {
       const signupId = await this.authService.signup(signupDto);
       if (signupId == -1) {
-        return CustomApiResponse.getInstance().throw(500, 'DB Error.');
+        throw new InternalServerErrorException('DB Error.');
       } else if (signupId == -2) {
-        return CustomApiResponse.getInstance().throw(500, 'Internal Server Error.');
+        throw new InternalServerErrorException('Internal Server Error.');
       }
-      return CustomApiResponse.getInstance().ok('Signup Success.', { accessToken: MakeJwtToken(signupId, signupDto.name, signupDto.email) });
+
+      const accessToken = this.customJwtService.sign(findUser.id, findUser.role == UserRole.ADMIN ? true : false);
+      return CommonResponse.ok('Signup Success.', { accessToken });
     }
   }
 
@@ -46,14 +50,15 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto) {
     const findUser = await this.authService.findByEmail(loginDto.email);
     if (!findUser) {
-      return CustomApiResponse.getInstance().throw(400, 'Email not exist.');
+      throw new BadRequestException('Email not exist.');
     }
     const pwdOk = await bcrypt.compare(loginDto.password, findUser.password);
     if (!pwdOk) {
-      return CustomApiResponse.getInstance().throw(400, 'Password not correct.');
+      throw new BadRequestException('Password not correct.');
     }
 
-    return CustomApiResponse.getInstance().ok('Login Success.', { accessToken: MakeJwtToken(findUser.id, findUser.name, findUser.email) });
+    const accessToken = this.customJwtService.sign(findUser.id, findUser.role == UserRole.ADMIN ? true : false);
+    return CommonResponse.ok('Login Success.', { accessToken });
   }
 
   @Post('/me')
@@ -65,10 +70,10 @@ export class AuthController {
     const { userId } = req;
     const findUser = await this.authService.findById(userId);
     if (!findUser) {
-      return CustomApiResponse.getInstance().throw(400, 'Invalid Access');
+      throw new BadRequestException('Invalid Access');
     }
 
-    return CustomApiResponse.getInstance().ok('My Info.', { id: userId, name: findUser.name, email: findUser.email, role: findUser.role, status: findUser.status, createdAt: findUser.created_at });
+    return CommonResponse.ok('My Info.', { id: userId, name: findUser.name, email: findUser.email, role: findUser.role, status: findUser.status, createdAt: findUser.created_at });
   }
 
   @Get('guard')

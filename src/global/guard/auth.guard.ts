@@ -22,7 +22,6 @@ export class AuthGuard implements CanActivate {
 
     try {
       const decoded = jwt.verify(token, this.configService.get<string>('JWT_SECRET')!);
-      // 원하는 속성 붙이기
       request['userId'] = decoded['userId'];
       return true;
     } catch (err) {

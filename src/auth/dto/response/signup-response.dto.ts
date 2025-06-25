@@ -1,4 +1,4 @@
-import { CustomApiResponseBase } from '@/common/dto/api-response.dto';
+import { CommonResponseBase } from '@/common/dto/api-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SignupData {
@@ -6,7 +6,7 @@ export class SignupData {
   accessToken: string;
 }
 
-export class SignupResponse extends CustomApiResponseBase {
+export class SignupResponse extends CommonResponseBase {
   @ApiProperty({ type: SignupData })
   data: SignupData;
 }
