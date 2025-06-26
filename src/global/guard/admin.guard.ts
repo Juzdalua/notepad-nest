@@ -12,8 +12,8 @@ export class AdminGuard implements CanActivate {
 
     if (!userId) throw new ForbiddenException('Require Login.');
 
-    const user = await this.authService.isAdmin(userId);
-    if (user != 1) {
+    const isAdmin = await this.authService.isAdmin(userId);
+    if (!isAdmin) {
       throw new ForbiddenException('Invalid Roles.');
     }
 

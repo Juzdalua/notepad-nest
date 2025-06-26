@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -21,20 +21,20 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>
   ) {}
 
-  async isAdmin(userId: number): Promise<number> {
+  async isAdmin(userId: number): Promise<boolean> {
     try {
       const user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) {
-        return -1;
+        throw new BadRequestException('Invalid access.');
       }
 
       if (user.role != UserRole.ADMIN) {
-        return -2;
+        return false;
       }
-      return 1;
+      return true;
     } catch (error) {
       this.logger.error(error);
-      return 0;
+      throw new InternalServerErrorException((error as Error).message);
     }
   }
 

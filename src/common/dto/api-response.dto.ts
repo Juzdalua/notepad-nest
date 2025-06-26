@@ -17,6 +17,7 @@ export class CommonResponseThrow extends CommonResponseBase {
   error: any;
 }
 
+// use swagger annotaion
 export function ApiDefaultResponses() {
   return applyDecorators(
     // 400
