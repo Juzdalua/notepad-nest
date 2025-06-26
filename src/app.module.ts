@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import ormConfig from './global/config/ormconfig';
 import { LoggerMiddleware } from './util/logger.middleware';
-import { UserEntity } from './auth/domain/user.domain';
+import { UserEntity } from './auth/entities/user.entity';
 import { QrModule } from './qr/qr.module';
 
 @Module({

@@ -13,7 +13,7 @@ import { SignupDto } from './dto/request/signup.dto';
 import { SignupResponse } from './dto/response/signup-response.dto';
 import { UserResponse } from './dto/response/user-response.dto';
 import { CustomJwtService } from '@/global/jwt/jwt.service';
-import { UserRole } from './domain/user.domain';
+import { UserRole } from './entities/user.entity';
 
 @ApiTags('Auth')
 @Controller('auth')

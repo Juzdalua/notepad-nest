@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@
 import { Observable } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
 import { Request } from 'express';
-import { UserRole } from '@/auth/domain/user.domain';
+import { UserRole } from '@/auth/entities/user.entity';
 import { CommonResponse } from '@/util/api.response';
 
 @Injectable()

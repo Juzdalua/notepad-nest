@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SignupDto } from './dto/request/signup.dto';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity, UserRole } from './domain/user.domain';
+import { UserEntity, UserRole } from './entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
 
 @Injectable()

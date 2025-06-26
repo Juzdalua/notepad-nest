@@ -1,6 +1,6 @@
 import { CommonResponseBase } from '@/common/dto/api-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole } from '../../domain/user.domain';
+import { UserRole } from '../../entities/user.entity';
 
 export class UserResponseData {
   @ApiProperty({ example: 1 })
