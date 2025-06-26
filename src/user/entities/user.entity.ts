@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-export enum UserRole {
+export enum USER_ROLE {
   USER = 'USER',
   ADMIN = 'ADMIN'
 }
@@ -22,8 +22,8 @@ export class UserEntity {
   @Column({ type: 'varchar' })
   nickname: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
-  role: UserRole;
+  @Column({ type: 'enum', enum: USER_ROLE, default: USER_ROLE.USER })
+  role: USER_ROLE;
 
   @Column({ type: 'text' })
   description: string;

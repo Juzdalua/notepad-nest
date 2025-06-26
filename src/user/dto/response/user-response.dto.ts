@@ -1,4 +1,4 @@
-import { UserRole } from '@/user/entities/user.entity';
+import { USER_ROLE } from '@/user/entities/user.entity';
 import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsNumber, IsString } from 'class-validator';
 
@@ -12,8 +12,8 @@ export class UserResponse {
   @IsString()
   nickname: string;
 
-  @IsEnum(UserRole)
-  role: UserRole;
+  @IsEnum(USER_ROLE)
+  role: USER_ROLE;
 
   @IsString()
   description: string;

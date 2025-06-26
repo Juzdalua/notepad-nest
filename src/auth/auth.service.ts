@@ -6,7 +6,7 @@ import { SignupDto } from './dto/request/signup.dto';
 import { CustomJwtService } from '../global/jwt/jwt.service';
 import * as fs from 'fs';
 import { extname } from 'path';
-import { UserEntity, UserRole } from '@/user/entities/user.entity';
+import { UserEntity, USER_ROLE } from '@/user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +28,7 @@ export class AuthService {
         throw new BadRequestException('Invalid access.');
       }
 
-      if (user.role != UserRole.ADMIN) {
+      if (user.role != USER_ROLE.ADMIN) {
         return false;
       }
       return true;
@@ -95,7 +95,7 @@ export class AuthService {
   async login(email: string): Promise<string> {
     try {
       const user = await this.userRepository.findOne({ where: { email } });
-      return this.customJwtService.sign(user.id, user.role == UserRole.ADMIN ? true : false);
+      return this.customJwtService.sign(user.id, user.role == USER_ROLE.ADMIN ? true : false);
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException((error as Error).message);
