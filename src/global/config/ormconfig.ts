@@ -11,7 +11,7 @@ const ormConfig: TypeOrmModuleOptions = {
   password: process.env.DB_PASS,
   database: process.env.DB_DATABASE,
   // entities: process.env.NODE_ENV !== 'production' ? ['dist/**/*.entity{.ts,.js}'] : ['src/**/*.entity{.ts,.js}'],
-  entities: [__dirname + '/../../**/*.domain.{js,ts}'],
+  entities: [__dirname + '/../../**/*.entity.{js,ts}'],
   // synchronize: process.env.NODE_ENV !== 'production',
   synchronize: false
   // logging:true,
