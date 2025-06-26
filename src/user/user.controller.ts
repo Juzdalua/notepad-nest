@@ -1,15 +1,15 @@
-import { JWTInterceptor, JWTRequest } from '@/global/jwt/jwt.interceptor';
+import { AuthGuard } from '@/auth/auth.guard';
+import { JWTRequest } from '@/global/jwt/jwt.interceptor';
 import { CommonResponse } from '@/util/api.response';
 import { BadRequestException, Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
+import * as fs from 'fs';
 import * as multer from 'multer';
 import { extname } from 'path';
 import { UpdateUserDto } from './dto/request/update-user.dto';
 import { UserService } from './user.service';
-import { plainToInstance } from 'class-transformer';
-import { validate } from 'class-validator';
-import { AuthGuard } from '@/auth/auth.guard';
-import * as fs from 'fs';
 
 @Controller('user')
 export class UserController {
