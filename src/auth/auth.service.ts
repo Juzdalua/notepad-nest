@@ -1,54 +1,29 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { SignupDto } from './dto/request/signup.dto';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity, UserRole } from './entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
+import { SignupDto } from './dto/request/signup.dto';
+import { CustomJwtService } from '../global/jwt/jwt.service';
+import * as fs from 'fs';
+import { extname } from 'path';
+import { UserEntity, UserRole } from '@/user/entities/user.entity';
 
 @Injectable()
 export class AuthService {
   private logger = new Logger(AuthService.name);
 
   constructor(
+    private readonly customJwtService: CustomJwtService,
+
     private readonly dataSource: DataSource,
 
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    private readonly userRepository: Repository<UserEntity>
   ) {}
-
-  async findById(userId: number): Promise<UserEntity | undefined> {
-    try {
-      const user = await this.userRepository.findOne({
-        where: {
-          id: userId
-        }
-      });
-
-      return user ?? undefined;
-    } catch (error) {
-      this.logger.error(error);
-      return undefined;
-    }
-  }
-
-  async findByEmail(email: string): Promise<UserEntity | undefined> {
-    try {
-      const user = await this.userRepository.findOne({
-        where: {
-          email
-        }
-      });
-
-      return user ?? undefined;
-    } catch (error) {
-      this.logger.error(error);
-      return undefined;
-    }
-  }
 
   async isAdmin(userId: number): Promise<number> {
     try {
-      const user = await this.findById(userId);
+      const user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) {
         return -1;
       }
@@ -63,58 +38,67 @@ export class AuthService {
     }
   }
 
-  async signup(signupDto: SignupDto): Promise<number> {
+  async signup(dto: SignupDto, image: Express.Multer.File): Promise<string> {
+    const qr = this.dataSource.createQueryRunner();
     try {
-      const hashedPassword = await bcrypt.hash(signupDto.password, 10);
+      await qr.connect();
+      await qr.startTransaction();
 
-      const newUser = await this.userRepository
-        .createQueryBuilder()
-        .insert()
-        .into(UserEntity)
-        .values({
-          email: signupDto.email,
-          name: signupDto.name,
-          password: hashedPassword
-        })
-        .execute();
+      const findUser = await qr.manager.findOne(UserEntity, {
+        where: {
+          name: dto.name,
+          nickname: dto.nickname
+        },
+        select: ['id']
+      });
+      if (findUser) {
+        throw new BadRequestException('Email already exist.');
+      }
 
-      return newUser.raw.insertId;
+      const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+      const createUserQuery = qr.manager.create(UserEntity, {
+        email: dto.email ?? undefined,
+        password: dto.password ? hashedPassword : undefined,
+        name: dto.name,
+        nickname: dto.nickname,
+        description: dto.description ?? undefined,
+        location: dto.location
+      });
+      const createdUser = await qr.manager.save(createUserQuery);
+      const createdUserId = createdUser.id;
+
+      const endpoint = `/uploads/${createdUserId}`;
+      if (!fs.existsSync(`./public${endpoint}`)) {
+        fs.mkdirSync(endpoint, { recursive: true });
+      }
+      const ext = extname(image.originalname);
+      const filename = `image-${Date.now()}${ext}`;
+      const imgUrl = `${endpoint}/${filename}`;
+      fs.writeFileSync(imgUrl, image.buffer);
+
+      qr.manager.update(UserEntity, { id: createdUserId }, { img_url: imgUrl });
+
+      const accessToken = this.customJwtService.sign(createdUserId, false);
+
+      await qr.commitTransaction();
+      return accessToken;
     } catch (error) {
+      await qr.rollbackTransaction();
       this.logger.error(error);
-      return -2;
+      throw new BadRequestException((error as Error).message);
+    } finally {
+      await qr.release();
     }
   }
 
-  // async verifyUser(userId: number, coupon: CouponEntity) {
-  //   const qr = this.dataSource.createQueryRunner();
-  //   await qr.connect();
-  //   await qr.startTransaction();
-
-  //   try {
-  //     await qr.manager.update(
-  //       CouponEntity,
-  //       { code: coupon.code, source: coupon.source },
-  //       {
-  //         status: true
-  //       }
-  //     );
-
-  //     await qr.manager.update(
-  //       UserEntity,
-  //       { id: userId },
-  //       {
-  //         status: true
-  //       }
-  //     );
-
-  //     await qr.commitTransaction();
-  //     return true;
-  //   } catch (error) {
-  //     this.logger.error(error);
-  //     await qr.rollbackTransaction();
-  //     return false;
-  //   } finally {
-  //     await qr.release();
-  //   }
-  // }
+  async login(email: string): Promise<string> {
+    try {
+      const user = await this.userRepository.findOne({ where: { email } });
+      return this.customJwtService.sign(user.id, user.role == UserRole.ADMIN ? true : false);
+    } catch (error) {
+      this.logger.error(error);
+      throw new BadRequestException((error as Error).message);
+    }
+  }
 }

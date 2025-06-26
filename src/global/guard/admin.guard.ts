@@ -1,9 +1,6 @@
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
-import { AuthService } from '../../auth/auth.service';
 import { Request } from 'express';
-import { UserRole } from '@/auth/entities/user.entity';
-import { CommonResponse } from '@/util/api.response';
+import { AuthService } from '../../auth/auth.service';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -15,8 +12,8 @@ export class AdminGuard implements CanActivate {
 
     if (!userId) throw new ForbiddenException('Require Login.');
 
-    const user = await this.authService.findById(userId);
-    if (!user || user.role != UserRole.ADMIN) {
+    const user = await this.authService.isAdmin(userId);
+    if (user != 1) {
       throw new ForbiddenException('Invalid Roles.');
     }
 

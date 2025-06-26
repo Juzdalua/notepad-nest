@@ -1,8 +1,8 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin'
+  USER = 'USER',
+  ADMIN = 'ADMIN'
 }
 
 @Entity({ name: 'user' })
@@ -11,16 +11,28 @@ export class UserEntity {
   id: number;
 
   @Column({ type: 'varchar' })
-  email: string;
+  email?: string;
+
+  @Column({ type: 'varchar' })
+  password?: string;
 
   @Column({ type: 'varchar' })
   name: string;
 
   @Column({ type: 'varchar' })
-  password: string;
+  nickname: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
+
+  @Column({ type: 'text' })
+  description: string;
+
+  @Column({ type: 'text' })
+  img_url: string;
+
+  @Column({ type: 'text' })
+  location: string;
 
   @Column({ type: 'tinyint', default: 0 })
   status: boolean;
