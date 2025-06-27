@@ -1,4 +1,4 @@
-import { AuthGuard } from '@/auth/auth.guard';
+import { AuthGuard } from '@/global/guard/auth.guard';
 import { JWTRequest } from '@/global/jwt/jwt.interceptor';
 import { CommonResponse } from '@/util/api.response';
 import { BadRequestException, Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
