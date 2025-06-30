@@ -8,6 +8,7 @@ import ormConfig from './global/config/ormconfig';
 import { QrModule } from './qr/qr.module';
 import { UserEntity } from './user/entities/user.entity';
 import { LoggerMiddleware } from './util/logger.middleware';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { LoggerMiddleware } from './util/logger.middleware';
     TypeOrmModule.forRoot(ormConfig),
     TypeOrmModule.forFeature([UserEntity]),
     AuthModule,
+    UserModule,
     QrModule
   ],
   controllers: [AppController],

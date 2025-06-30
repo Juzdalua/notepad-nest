@@ -1,8 +1,8 @@
 import { UserEntity } from '@/user/entities/user.entity';
-import { UserResponse } from './dto/response/user-response.dto';
+import { UserResponseData } from './dto/response/user-response.dto';
 
 export class UserMapper {
-  public static mapToResponseData(userEntity: UserEntity): UserResponse | undefined {
+  public static mapToResponseData(userEntity: UserEntity): UserResponseData | undefined {
     return {
       id: userEntity.id,
       name: userEntity.name,

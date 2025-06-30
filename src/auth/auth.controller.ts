@@ -1,16 +1,16 @@
 import { CommonResponse } from '@/util/api.response';
-import { BadRequestException, Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
+import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as multer from 'multer';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/request/login.dto';
 import { SignupDto } from './dto/request/signup.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { JWTRequest } from '@/global/jwt/jwt.interceptor';
-import * as multer from 'multer';
-import * as fs from 'fs';
-import { extname } from 'path';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { SignupResponse } from './dto/response/signup-response.dto';
+import { ApiDefaultResponses } from '@/common/dto/api-response.dto';
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService
@@ -31,6 +31,10 @@ export class AuthController {
       }
     })
   )
+  @ApiOperation({ summary: 'Signup' })
+  @ApiBody({ type: SignupDto })
+  @ApiOkResponse({ type: SignupResponse })
+  @ApiDefaultResponses()
   async signup(@Body() signupDto: SignupDto, @UploadedFile() image: Express.Multer.File) {
     const accessToken = await this.authService.signup(signupDto, image);
 
@@ -38,6 +42,10 @@ export class AuthController {
   }
 
   @Post('/login')
+  @ApiOperation({ summary: 'Login' })
+  @ApiBody({ type: LoginDto })
+  @ApiOkResponse({ type: SignupResponse })
+  @ApiDefaultResponses()
   async login(@Body() loginDto: LoginDto) {
     const accessToken = await this.authService.login(loginDto.email);
 

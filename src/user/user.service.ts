@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { UserMapper } from './user.mapper';
-import { UserResponse } from './dto/response/user-response.dto';
+import { UserResponseData } from './dto/response/user-response.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>
   ) {}
 
-  async findById(userId: number): Promise<UserResponse> {
+  async findById(userId: number): Promise<UserResponseData> {
     try {
       const user = await this.userRepository.findOne({
         where: {

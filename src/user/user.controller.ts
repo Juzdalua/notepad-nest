@@ -1,8 +1,10 @@
+import { ApiDefaultResponses } from '@/common/dto/api-response.dto';
 import { AuthGuard } from '@/global/guard/auth.guard';
 import { JWTRequest } from '@/global/jwt/jwt.interceptor';
 import { CommonResponse } from '@/util/api.response';
 import { BadRequestException, Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import * as fs from 'fs';
@@ -10,13 +12,19 @@ import * as multer from 'multer';
 import { extname } from 'path';
 import { UpdateUserDto } from './dto/request/update-user.dto';
 import { UserService } from './user.service';
+import { UserResponse } from './dto/response/user-response.dto';
 
 @Controller('user')
+@ApiTags('User')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @UseGuards(AuthGuard)
   @Get('/me')
+  @ApiOperation({ summary: 'Get User Info' })
+  @ApiOkResponse({ type: UserResponse })
+  @ApiDefaultResponses()
+  @ApiBearerAuth('accessToken')
   async getMe(@Req() req: JWTRequest) {
     const { userId } = req;
     const findUser = await this.userService.findById(userId);
@@ -55,6 +63,31 @@ export class UserController {
       }
     })
   )
+  @ApiOperation({ summary: 'Update User Info' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', example: 'kim' },
+        description: { type: 'string', example: 'HIHIHI' },
+        location: { type: 'string', example: 'KR' },
+        image: { type: 'string', format: 'binary', description: 'main image' }
+        // images: {
+        //   type: 'array',
+        //   items: {
+        //     type: 'string',
+        //     format: 'binary'
+        //   },
+        //   description: 'main images'
+        // }
+      },
+      required: [] // ['name']
+    }
+  })
+  @ApiOkResponse({ type: UserResponse })
+  @ApiDefaultResponses()
+  @ApiBearerAuth('accessToken')
   async updateMe(@Req() req: JWTRequest, @Body() updateUserDto: UpdateUserDto, @UploadedFile() image?: Express.Multer.File) {
     const { userId } = req;
     const parsedBody = plainToInstance(UpdateUserDto, updateUserDto ?? {}, {
