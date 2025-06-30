@@ -5,9 +5,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import ormConfig from './global/config/ormconfig';
-import { LoggerMiddleware } from './util/logger.middleware';
 import { QrModule } from './qr/qr.module';
 import { UserEntity } from './user/entities/user.entity';
+import { LoggerMiddleware } from './util/logger.middleware';
 
 @Module({
   imports: [
