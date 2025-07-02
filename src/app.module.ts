@@ -9,6 +9,7 @@ import { QrModule } from './qr/qr.module';
 import { UserEntity } from './user/entities/user.entity';
 import { LoggerMiddleware } from './util/logger.middleware';
 import { UserModule } from './user/user.module';
+import { RoomModule } from './room/room.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { UserModule } from './user/user.module';
     TypeOrmModule.forFeature([UserEntity]),
     AuthModule,
     UserModule,
-    QrModule
+    QrModule,
+    RoomModule
   ],
   controllers: [AppController],
   providers: [AppService],
