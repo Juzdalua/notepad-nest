@@ -1,12 +1,18 @@
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity, USER_ROLE } from '../user/entities/user.entity';
 import { DataSource, Repository } from 'typeorm';
 import { SignupDto } from './dto/request/signup.dto';
 import { CustomJwtService } from '../global/jwt/jwt.service';
 import * as fs from 'fs';
 import { extname } from 'path';
-import { UserEntity, USER_ROLE } from '@/user/entities/user.entity';
+import { LoginDto } from './dto/request/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +24,7 @@ export class AuthService {
     private readonly dataSource: DataSource,
 
     @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async isAdmin(userId: number): Promise<boolean> {
@@ -47,9 +53,9 @@ export class AuthService {
       const findUser = await qr.manager.findOne(UserEntity, {
         where: {
           name: dto.name,
-          nickname: dto.nickname
+          nickname: dto.nickname,
         },
-        select: ['id']
+        select: ['id'],
       });
       if (findUser) {
         throw new BadRequestException('Email already exist.');
@@ -63,7 +69,7 @@ export class AuthService {
         name: dto.name,
         nickname: dto.nickname,
         description: dto.description ?? undefined,
-        location: dto.location
+        location: dto.location,
       });
       const createdUser = await qr.manager.save(createUserQuery);
       const createdUserId = createdUser.id;
@@ -92,10 +98,24 @@ export class AuthService {
     }
   }
 
-  async login(email: string): Promise<string> {
+  async login(dto: LoginDto): Promise<string> {
     try {
-      const user = await this.userRepository.findOne({ where: { email } });
-      return this.customJwtService.sign(user.id, user.role == USER_ROLE.ADMIN ? true : false);
+      const user = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
+      if (!user) {
+        throw new BadRequestException('Invalid User');
+      }
+
+      if (!(await bcrypt.compare(dto.password, user.password))) {
+        throw new BadRequestException('Invalid PWD');
+      }
+
+      return this.customJwtService.sign(
+        user.id,
+        user.role == USER_ROLE.ADMIN ? true : false,
+        dto.rememberMe ? '7d' : '1h',
+      );
     } catch (error) {
       this.logger.error(error);
       throw new BadRequestException((error as Error).message);
