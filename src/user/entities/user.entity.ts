@@ -38,5 +38,5 @@ export class UserEntity {
   status: boolean;
 
   @CreateDateColumn({ type: 'datetime' })
-  created_at: Date;
+  created_at: Date; 
 }
