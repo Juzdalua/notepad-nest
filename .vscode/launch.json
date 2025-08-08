@@ -1,0 +1,56 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch via NPM",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "start:dev"],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**",
+        "${workspaceFolder}/dist/src/core/**",
+        "${workspaceFolder}/dist/src/common/**",
+        "${workspaceFolder}/dist/src/modules/audit-log/**",
+        "${workspaceFolder}/dist/src/modules/auth/**",
+        "${workspaceFolder}/dist/src/modules/**/*.subscriber.js"
+      ]
+    },
+    {
+      "name": "Attach to Process",
+      "type": "node",
+      "request": "attach",
+      "processId": "${command:PickProcess}",
+      "restart": true,
+      "smartStep": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**",
+        "${workspaceFolder}/dist/src/core/**",
+        "${workspaceFolder}/dist/src/common/**",
+        "${workspaceFolder}/dist/src/modules/audit-log/**",
+        "${workspaceFolder}/dist/src/modules/auth/**",
+        "${workspaceFolder}/dist/src/modules/**/*.subscriber.js"
+      ]
+    },
+    {
+      "name": "Attach to Process By Port",
+      "type": "node",
+      "request": "attach",
+      "port": 19229,
+      "restart": true,
+      "smartStep": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**",
+        "${workspaceFolder}/dist/src/core/**",
+        "${workspaceFolder}/dist/src/common/**",
+        "${workspaceFolder}/dist/src/modules/audit-log/**",
+        "${workspaceFolder}/dist/src/modules/auth/**",
+        "${workspaceFolder}/dist/src/modules/**/*.subscriber.js"
+      ]
+    }
+  ]
+}
