@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as bodyParser from 'body-parser';
 import { AppModule } from './app.module';
 import { GlobalHttpExceptionFilter } from './global/filter/exception.filter';
+import * as mysql from 'mysql2/promise';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -41,6 +42,20 @@ async function bootstrap() {
       }
     });
   }
+
+  // const connection = await mysql.createConnection({
+  //   host: process.env.DB_HOST,
+  //   user: process.env.DB_USER,
+  //   password: process.env.DB_PASS,
+  //   database: process.env.DB_DATABASE
+  // });
+
+  // const [results, fields] = await connection.query(`SELECT * FROM USER`);
+  // console.log(results, fields)
+
+  
+
+  const a = undefined;
 
   await app.listen(process.env.PORT ?? 8999).then(() => {
     console.log(`✅ Application is running on: http://localhost:${process.env.PORT ?? 8999} 🚀`);

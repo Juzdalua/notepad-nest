@@ -10,6 +10,7 @@ import { UserEntity } from './user/entities/user.entity';
 import { LoggerMiddleware } from './util/logger.middleware';
 import { UserModule } from './user/user.module';
 import { RoomModule } from './room/room.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { RoomModule } from './room/room.module';
     AuthModule,
     UserModule,
     QrModule,
-    RoomModule
+    CommonModule
+    // RoomModule
   ],
   controllers: [AppController],
   providers: [AppService],
