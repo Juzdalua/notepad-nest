@@ -26,7 +26,9 @@ export class AppService {
     try {
       const conn = this.connectionService.getConnection();
       const [rows] = await conn.query<User[]>('SELECT * FROM USER');
-      return rows;
+      const users = await this.connectionService.query<User>(`SELECT * FROM USER`);
+
+      return users;
     } catch (error) {
       console.error((error as Error).message);
       throw new Error(error);
