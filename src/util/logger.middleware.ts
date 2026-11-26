@@ -17,6 +17,8 @@ export class LoggerMiddleware implements NestMiddleware {
       const formattedStatusCode = this.formatStatusCode(statusCode);
       const formattedResponseTime = this.formatResponseTime(responseTime);
 
+      Logger.debug('123123123')
+
       this.logger.log(`${method} ${originalUrl} ${formattedStatusCode} ${formattedResponseTime}`);
     });
 
