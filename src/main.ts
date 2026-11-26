@@ -46,7 +46,7 @@ async function bootstrap() {
       }
     });
   }
-//
+//ㅇㅇ
   const arc = archiver;
   arc.registerFormat('zip-encrypted', archiver_zip);
   let archive = archiver.create('zip-encrypted', { zlib: { level: 8 }, encryptionMethod: 'aes256', password: '123' });
