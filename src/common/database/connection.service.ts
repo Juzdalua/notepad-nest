@@ -44,4 +44,14 @@ export class ConnectionService {
       this.connection = null;
     }
   }
+
+  async query<T extends mysql.RowDataPacket = mysql.RowDataPacket>(sql: string, params?: any[]): Promise<T[]> {
+    const [rows] = await this.connection.query<T[]>(sql, params);
+    return rows;
+  }
+
+  async execute(sql: string, params?: any[]): Promise<mysql.ResultSetHeader> {
+    const [result] = await this.connection.execute(sql, params);
+    return result as mysql.ResultSetHeader;
+  }
 }
